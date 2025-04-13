@@ -390,7 +390,7 @@
         <form id="loginForm">
           <div class="form-group">
             <label for="loginEmail"
-              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
+              ><i class="fas fa-envelope"></i> اسم المستخدم</label
             >
             <input
               type="text"
@@ -416,79 +416,6 @@
             <i class="fas fa-sign-in-alt"></i> دخول
           </button>
           <div class="message hidden" id="loginMessage"></div>
-
-          <div style="margin-top: 20px; text-align: center">
-            <p>
-              ليس لديك حساب؟ <a href="#" id="showRegister">إنشاء حساب جديد</a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- شاشة تسجيل حساب جديد -->
-    <div class="login-screen hidden" id="registerScreen">
-      <div class="login-container">
-        <h2 class="card-title">
-          <i class="fas fa-user-plus"></i> إنشاء حساب جديد
-        </h2>
-        <form id="registerForm">
-          <div class="form-group">
-            <label for="registerName"
-              ><i class="fas fa-user"></i> الاسم الكامل</label
-            >
-            <input
-              type="text"
-              id="registerName"
-              required
-              placeholder="أدخل الاسم الكامل"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="registerEmail"
-              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
-            >
-            <input
-              type="text"
-              id="registerUsername"
-              required
-              placeholder="أدخل اسم المستخدم"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="registerPassword"
-              ><i class="fas fa-key"></i> كلمة المرور</label
-            >
-            <input
-              type="password"
-              id="registerPassword"
-              required
-              placeholder="أدخل كلمة المرور (6 أحرف على الأقل)"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword"
-              ><i class="fas fa-key"></i> تأكيد كلمة المرور</label
-            >
-            <input
-              type="password"
-              id="confirmPassword"
-              required
-              placeholder="أعد إدخال كلمة المرور"
-            />
-          </div>
-
-          <button type="submit" class="btn btn-success btn-block">
-            <i class="fas fa-user-plus"></i> إنشاء حساب
-          </button>
-          <div class="message hidden" id="registerMessage"></div>
-
-          <div style="margin-top: 20px; text-align: center">
-            <p>لديك حساب بالفعل؟ <a href="#" id="showLogin">تسجيل الدخول</a></p>
-          </div>
         </form>
       </div>
     </div>
@@ -652,7 +579,6 @@
       } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
       import {
         getAuth,
-        createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
         signOut,
         onAuthStateChanged,
@@ -677,12 +603,6 @@
       const loginScreen = document.getElementById("loginScreen");
       const loginForm = document.getElementById("loginForm");
       const loginMessage = document.getElementById("loginMessage");
-      const registerScreen = document.getElementById("registerScreen");
-      const registerForm = document.getElementById("registerForm");
-      const registerMessage = document.getElementById("registerMessage");
-      const showRegister = document.getElementById("showRegister");
-      const showLogin = document.getElementById("showLogin");
-
       const mainApp = document.getElementById("mainApp");
       const currentUserName = document.getElementById("currentUserName");
       const logoutBtn = document.getElementById("logoutBtn");
@@ -720,19 +640,6 @@
         companyLogo.src = localStorage.getItem("companyLogo");
       }
 
-      // تبديل بين شاشتي الدخول والتسجيل
-      showRegister.addEventListener("click", (e) => {
-        e.preventDefault();
-        loginScreen.classList.add("hidden");
-        registerScreen.classList.remove("hidden");
-      });
-
-      showLogin.addEventListener("click", (e) => {
-        e.preventDefault();
-        registerScreen.classList.add("hidden");
-        loginScreen.classList.remove("hidden");
-      });
-
       // تسجيل الدخول
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -748,15 +655,6 @@
           );
           currentUser = userCredential.user;
 
-          // جلب بيانات المستخدم الإضافية
-          const userRef = ref(db, `users/${currentUser.uid}`);
-          const snapshot = await get(userRef);
-
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            currentUser.displayName = userData.name;
-          }
-
           // إخفاء واجهة تسجيل الدخول وعرض الواجهة الرئيسية
           loginScreen.style.opacity = "0";
           loginScreen.style.pointerEvents = "none";
@@ -766,69 +664,10 @@
             mainApp.classList.remove("hidden");
           }, 500);
 
-          const fallbackName = email.split("@")[0];
-          const displayName = currentUser.displayName || fallbackName;
+          const displayName = email.split("@")[0];
           currentUserName.textContent = displayName;
         } catch (error) {
           showLoginMessage(getAuthErrorMessage(error.code), "error");
-        }
-      });
-
-      // تسجيل حساب جديد
-      registerForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const name = document.getElementById("registerName").value.trim();
-        const username = document
-          .getElementById("registerUsername")
-          .value.trim();
-        const email = `${username}@gmail.com`;
-        const password = document.getElementById("registerPassword").value;
-        const confirmPassword =
-          document.getElementById("confirmPassword").value;
-
-        if (password !== confirmPassword) {
-          showRegisterMessage("كلمة المرور غير متطابقة", "error");
-          return;
-        }
-
-        if (password.length < 6) {
-          showRegisterMessage(
-            "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
-            "error"
-          );
-          return;
-        }
-
-        try {
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          currentUser = userCredential.user;
-
-          // حفظ بيانات المستخدم الإضافية في قاعدة البيانات
-          await set(ref(db, `users/${currentUser.uid}`), {
-            name: name,
-            email: email,
-            createdAt: new Date().toISOString(),
-          });
-
-          currentUser.displayName = name;
-
-          // إخفاء واجهة التسجيل وعرض الواجهة الرئيسية
-          registerScreen.style.opacity = "0";
-          registerScreen.style.pointerEvents = "none";
-
-          setTimeout(() => {
-            registerScreen.classList.add("hidden");
-            mainApp.classList.remove("hidden");
-          }, 500);
-
-          currentUserName.textContent = name;
-          showRegisterMessage("✅ تم إنشاء الحساب بنجاح", "success");
-        } catch (error) {
-          showRegisterMessage(getAuthErrorMessage(error.code), "error");
         }
       });
 
@@ -844,7 +683,7 @@
           loginScreen.style.pointerEvents = "auto";
           loginScreen.classList.remove("hidden");
 
-          document.getElementById("loginEmail").value = "";
+          document.getElementById("loginUsername").value = "";
           document.getElementById("loginPassword").value = "";
         } catch (error) {
           showMessage("❌ حدث خطأ أثناء تسجيل الخروج", "error");
@@ -855,20 +694,9 @@
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           currentUser = user;
-
-          // جلب بيانات المستخدم الإضافية
-          const userRef = ref(db, `users/${user.uid}`);
-          const snapshot = await get(userRef);
-
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            currentUser.displayName = userData.name;
-          }
-
           loginScreen.classList.add("hidden");
           mainApp.classList.remove("hidden");
-          const fallbackName = user.email.split("@")[0];
-          const displayName = currentUser.displayName || fallbackName;
+          const displayName = user.email.split("@")[0];
           currentUserName.textContent = displayName;
         } else {
           loginScreen.classList.remove("hidden");
@@ -980,7 +808,7 @@
           name: itemName,
           quantity,
           operation: operationType,
-          user: currentUser.displayName || currentUser.email.split("@")[0],
+          user: currentUser.email.split("@")[0],
           userId: currentUser.uid,
           notes,
           date,
@@ -1080,14 +908,10 @@
       // ترجمة أخطاء المصادقة
       function getAuthErrorMessage(errorCode) {
         const messages = {
-          "auth/invalid-email": "البريد الإلكتروني غير صالح",
+          "auth/invalid-email": "اسم المستخدم غير صالح",
           "auth/user-disabled": "هذا الحساب معطل",
-          "auth/user-not-found": "لا يوجد حساب بهذا البريد الإلكتروني",
+          "auth/user-not-found": "لا يوجد حساب بهذا الاسم",
           "auth/wrong-password": "كلمة المرور غير صحيحة",
-          "auth/email-already-in-use": "البريد الإلكتروني مستخدم بالفعل",
-          "auth/operation-not-allowed": "هذه العملية غير مسموح بها",
-          "auth/weak-password":
-            "كلمة المرور ضعيفة (يجب أن تكون 6 أحرف على الأقل)",
           "auth/too-many-requests":
             "عدد كبير جداً من الطلبات، يرجى المحاولة لاحقاً",
         };
@@ -1112,16 +936,6 @@
 
         setTimeout(() => {
           loginMessage.classList.add("hidden");
-        }, 3000);
-      }
-
-      function showRegisterMessage(text, type) {
-        registerMessage.textContent = text;
-        registerMessage.className = `message ${type}-message`;
-        registerMessage.classList.remove("hidden");
-
-        setTimeout(() => {
-          registerMessage.classList.add("hidden");
         }, 3000);
       }
 
