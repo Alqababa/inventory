@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-
-<html dir="rtl" lang="ar">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>نظام الجرد الذكي</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<style>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام الجرد الذكي</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
       :root {
         --primary-color: #2c3e50;
         --secondary-color: #3498db;
@@ -379,129 +381,264 @@
         }
       }
     </style>
-</head>
-<body>
-<!-- شاشة تسجيل الدخول -->
-<div class="login-screen" id="loginScreen">
-<div class="login-container">
-<h2 class="card-title"><i class="fas fa-lock"></i> تسجيل الدخول</h2>
-<form id="loginForm">
-<div class="form-group">
-<label for="loginEmail"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
-<input id="loginUsername" placeholder="أدخل اسم المستخدم" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="loginPassword"><i class="fas fa-key"></i> كلمة المرور</label>
-<input id="loginPassword" placeholder="أدخل كلمة المرور" required="" type="password"/>
-</div>
-<button class="btn btn-primary btn-block" type="submit">
-<i class="fas fa-sign-in-alt"></i> دخول
-          </button>
-<div class="message hidden" id="loginMessage"></div>
-<div style="margin-top: 20px; text-align: center">
+  </head>
+  <body>
+    <!-- شاشة تسجيل الدخول -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-container">
+        <h2 class="card-title"><i class="fas fa-lock"></i> تسجيل الدخول</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail"
+              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
+            >
+            <input
+              type="text"
+              id="loginUsername"
+              required
+              placeholder="أدخل اسم المستخدم"
+            />
+          </div>
 
-</div>
-</form>
-</div>
-</div>
-<!-- شاشة تسجيل حساب جديد -->
+          <div class="form-group">
+            <label for="loginPassword"
+              ><i class="fas fa-key"></i> كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="loginPassword"
+              required
+              placeholder="أدخل كلمة المرور"
+            />
+          </div>
 
-<!-- واجهة النظام الرئيسية -->
-<div class="container hidden" id="mainApp">
-<header class="header">
-<img alt="شعار الشركة" class="logo" id="companyLogo" src="https://github.com/Alqababa/Feedback/blob/main/LOGO.png?raw=true"/>
-<h1 class="title"><i class="fas fa-boxes"></i> نظام إدارة المخزون</h1>
-<div class="user-info">
-<span id="currentUserName"></span>
-<button class="btn btn-danger" id="logoutBtn">
-<i class="fas fa-sign-out-alt"></i> خروج
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-sign-in-alt"></i> دخول
           </button>
-</div>
-</header>
-<div class="card">
-<h2 class="card-title">
-<i class="fas fa-clipboard-list"></i> تسجيل عملية جرد
+          <div class="message hidden" id="loginMessage"></div>
+
+          <div style="margin-top: 20px; text-align: center">
+            <p>
+              ليس لديك حساب؟ <a href="#" id="showRegister">إنشاء حساب جديد</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- شاشة تسجيل حساب جديد -->
+    <div class="login-screen hidden" id="registerScreen">
+      <div class="login-container">
+        <h2 class="card-title">
+          <i class="fas fa-user-plus"></i> إنشاء حساب جديد
         </h2>
-<form id="inventoryForm">
-<div class="form-group">
-<label for="itemName"><i class="fas fa-tag"></i> اسم الصنف</label>
-<input id="itemName" placeholder="أدخل اسم الصنف" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="quantity"><i class="fas fa-calculator"></i> الكمية</label>
-<input id="quantity" min="1" placeholder="أدخل الكمية" required="" type="number"/>
-</div>
-<div class="form-group">
-<label><i class="fas fa-exchange-alt"></i> نوع العملية</label>
-<div class="radio-group">
-<div class="radio-option add-option">
-<input checked="" id="addOperation" name="operationType" type="radio" value="add"/>
-<label class="radio-label" for="addOperation">
-<i class="fas fa-plus-circle"></i> إضافة إلى المخزون
-                </label>
-</div>
-<div class="radio-option subtract-option">
-<input id="subtractOperation" name="operationType" type="radio" value="subtract"/>
-<label class="radio-label" for="subtractOperation">
-<i class="fas fa-minus-circle"></i> سحب من المخزون
-                </label>
-</div>
-</div>
-</div>
-<div class="form-group">
-<label for="notes"><i class="fas fa-sticky-note"></i> ملاحظات</label>
-<textarea id="notes" placeholder="أدخل أي ملاحظات إضافية"></textarea>
-</div>
-<button class="btn btn-success btn-block" type="submit">
-<i class="fas fa-save"></i> حفظ العملية
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="registerName"
+              ><i class="fas fa-user"></i> الاسم الكامل</label
+            >
+            <input
+              type="text"
+              id="registerName"
+              required
+              placeholder="أدخل الاسم الكامل"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="registerEmail"
+              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
+            >
+            <input
+              type="text"
+              id="registerUsername"
+              required
+              placeholder="أدخل اسم المستخدم"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="registerPassword"
+              ><i class="fas fa-key"></i> كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="registerPassword"
+              required
+              placeholder="أدخل كلمة المرور (6 أحرف على الأقل)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword"
+              ><i class="fas fa-key"></i> تأكيد كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="confirmPassword"
+              required
+              placeholder="أعد إدخال كلمة المرور"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block">
+            <i class="fas fa-user-plus"></i> إنشاء حساب
           </button>
-<div class="message hidden" id="message"></div>
-</form>
-</div>
-<div class="card">
-<h2 class="card-title">
-<i class="fas fa-chart-bar"></i> التحكم في البيانات
+          <div class="message hidden" id="registerMessage"></div>
+
+          <div style="margin-top: 20px; text-align: center">
+            <p>لديك حساب بالفعل؟ <a href="#" id="showLogin">تسجيل الدخول</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- واجهة النظام الرئيسية -->
+    <div class="container hidden" id="mainApp">
+      <header class="header">
+        <img
+          src="https://github.com/Alqababa/Feedback/blob/main/LOGO.png?raw=true"
+          alt="شعار الشركة"
+          class="logo"
+          id="companyLogo"
+        />
+        <h1 class="title"><i class="fas fa-boxes"></i> نظام إدارة المخزون</h1>
+        <div class="user-info">
+          <span id="currentUserName"></span>
+          <button id="logoutBtn" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> خروج
+          </button>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2 class="card-title">
+          <i class="fas fa-clipboard-list"></i> تسجيل عملية جرد
         </h2>
-<button class="btn btn-primary btn-block" id="showDataBtn">
-<i class="fas fa-table"></i> عرض سجل الجرد والكميات
-        </button>
-<button class="btn btn-danger btn-block" id="cleanupBtn" style="margin-top: 10px">
-<i class="fas fa-trash-alt"></i> تنظيف السجلات القديمة
-        </button>
-</div>
-<div class="card hidden" id="outputSection">
-<h2 class="card-title"><i class="fas fa-warehouse"></i> جرد المخزون</h2>
-<div class="table-responsive">
-<table id="inventoryTable">
-<thead>
-<tr>
-<th>اسم الصنف</th>
-<th>الكمية</th>
-<th>نوع العملية</th>
-<th>المستخدم</th>
-<th>الملاحظات</th>
-<th>التاريخ</th>
-<th>العمر (أيام)</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
-<h2 class="card-title">
-<i class="fas fa-box-open"></i> الكميات المتبقية في المخزون
+        <form id="inventoryForm">
+          <div class="form-group">
+            <label for="itemName"><i class="fas fa-tag"></i> اسم الصنف</label>
+            <input
+              type="text"
+              id="itemName"
+              required
+              placeholder="أدخل اسم الصنف"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="quantity"
+              ><i class="fas fa-calculator"></i> الكمية</label
+            >
+            <input
+              type="number"
+              id="quantity"
+              required
+              placeholder="أدخل الكمية"
+              min="1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-exchange-alt"></i> نوع العملية</label>
+            <div class="radio-group">
+              <div class="radio-option add-option">
+                <input
+                  type="radio"
+                  id="addOperation"
+                  name="operationType"
+                  value="add"
+                  checked
+                />
+                <label for="addOperation" class="radio-label">
+                  <i class="fas fa-plus-circle"></i> إضافة إلى المخزون
+                </label>
+              </div>
+              <div class="radio-option subtract-option">
+                <input
+                  type="radio"
+                  id="subtractOperation"
+                  name="operationType"
+                  value="subtract"
+                />
+                <label for="subtractOperation" class="radio-label">
+                  <i class="fas fa-minus-circle"></i> سحب من المخزون
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes"
+              ><i class="fas fa-sticky-note"></i> ملاحظات</label
+            >
+            <textarea
+              id="notes"
+              placeholder="أدخل أي ملاحظات إضافية"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block">
+            <i class="fas fa-save"></i> حفظ العملية
+          </button>
+          <div class="message hidden" id="message"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">
+          <i class="fas fa-chart-bar"></i> التحكم في البيانات
         </h2>
-<ul class="stock-list" id="stockList"></ul>
-</div>
-<footer class="footer">
-<p>
+        <button id="showDataBtn" class="btn btn-primary btn-block">
+          <i class="fas fa-table"></i> عرض سجل الجرد والكميات
+        </button>
+        <button
+          id="cleanupBtn"
+          class="btn btn-danger btn-block"
+          style="margin-top: 10px"
+        >
+          <i class="fas fa-trash-alt"></i> تنظيف السجلات القديمة
+        </button>
+      </div>
+
+      <div class="card hidden" id="outputSection">
+        <h2 class="card-title"><i class="fas fa-warehouse"></i> جرد المخزون</h2>
+        <div class="table-responsive">
+          <table id="inventoryTable">
+            <thead>
+              <tr>
+                <th>اسم الصنف</th>
+                <th>الكمية</th>
+                <th>نوع العملية</th>
+                <th>المستخدم</th>
+                <th>الملاحظات</th>
+                <th>التاريخ</th>
+                <th>العمر (أيام)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <h2 class="card-title">
+          <i class="fas fa-box-open"></i> الكميات المتبقية في المخزون
+        </h2>
+        <ul class="stock-list" id="stockList"></ul>
+      </div>
+
+      <footer class="footer">
+        <p>
           تم التطوير بواسطة
-          <span style="color: var(--secondary-color); font-weight: 700">رامي</span>
-          | جميع الحقوق محفوظة © <span id="currentYear"></span>
-</p>
-</footer>
-</div>
-<!-- Firebase Script -->
-<script type="module">
+          <span style="color: var(--secondary-color); font-weight: 700"
+            >رامي</span
+          >
+          | جميع الحقوق محفوظة &copy; <span id="currentYear"></span>
+        </p>
+      </footer>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
       import {
         getDatabase,
@@ -540,7 +677,11 @@
       const loginScreen = document.getElementById("loginScreen");
       const loginForm = document.getElementById("loginForm");
       const loginMessage = document.getElementById("loginMessage");
-      
+      const registerScreen = document.getElementById("registerScreen");
+      const registerForm = document.getElementById("registerForm");
+      const registerMessage = document.getElementById("registerMessage");
+      const showRegister = document.getElementById("showRegister");
+      const showLogin = document.getElementById("showLogin");
 
       const mainApp = document.getElementById("mainApp");
       const currentUserName = document.getElementById("currentUserName");
@@ -580,9 +721,17 @@
       }
 
       // تبديل بين شاشتي الدخول والتسجيل
-      
+      showRegister.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginScreen.classList.add("hidden");
+        registerScreen.classList.remove("hidden");
+      });
 
-      
+      showLogin.addEventListener("click", (e) => {
+        e.preventDefault();
+        registerScreen.classList.add("hidden");
+        loginScreen.classList.remove("hidden");
+      });
 
       // تسجيل الدخول
       loginForm.addEventListener("submit", async (e) => {
@@ -626,7 +775,62 @@
       });
 
       // تسجيل حساب جديد
-      
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("registerName").value.trim();
+        const username = document
+          .getElementById("registerUsername")
+          .value.trim();
+        const email = `${username}@gmail.com`;
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+          showRegisterMessage("كلمة المرور غير متطابقة", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showRegisterMessage(
+            "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+            "error"
+          );
+          return;
+        }
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          currentUser = userCredential.user;
+
+          // حفظ بيانات المستخدم الإضافية في قاعدة البيانات
+          await set(ref(db, `users/${currentUser.uid}`), {
+            name: name,
+            email: email,
+            createdAt: new Date().toISOString(),
+          });
+
+          currentUser.displayName = name;
+
+          // إخفاء واجهة التسجيل وعرض الواجهة الرئيسية
+          registerScreen.style.opacity = "0";
+          registerScreen.style.pointerEvents = "none";
+
+          setTimeout(() => {
+            registerScreen.classList.add("hidden");
+            mainApp.classList.remove("hidden");
+          }, 500);
+
+          currentUserName.textContent = name;
+          showRegisterMessage("✅ تم إنشاء الحساب بنجاح", "success");
+        } catch (error) {
+          showRegisterMessage(getAuthErrorMessage(error.code), "error");
+        }
+      });
 
       // تسجيل الخروج
       logoutBtn.addEventListener("click", async () => {
@@ -911,9 +1115,28 @@
         }, 3000);
       }
 
-      );
+      function showRegisterMessage(text, type) {
+        registerMessage.textContent = text;
+        registerMessage.className = `message ${type}-message`;
+        registerMessage.classList.remove("hidden");
+
+        setTimeout(() => {
+          registerMessage.classList.add("hidden");
+        }, 3000);
+      }
+
+      // تنظيف السجلات القديمة تلقائياً عند تحميل الصفحة
+      window.addEventListener("load", async () => {
+        if (currentUser) {
+          await cleanupOldRecords();
+        }
+      });
     </script>
-<!-- Load Tajawal font for better Arabic support -->
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
-</body>
+
+    <!-- Load Tajawal font for better Arabic support -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </body>
 </html>
