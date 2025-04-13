@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام الجرد الذكي</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --success-color: #27ae60;
+        --danger-color: #e74c3c;
+        --warning-color: #f39c12;
+        --light-color: #ecf0f1;
+        --dark-color: #34495e;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Tajawal", Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        min-height: 100vh;
+        color: var(--dark-color);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background-color: white;
+        padding: 15px 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        max-height: 70px;
+        max-width: 200px;
+      }
+
+      .title {
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card-title {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        font-size: 20px;
+        border-bottom: 2px solid var(--light-color);
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark-color);
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border 0.3s;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--secondary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+      }
+
+      .btn-primary {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #2980b9;
+      }
+
+      .btn-success {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background-color: #219955;
+      }
+
+      .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background-color: #c0392b;
+      }
+
+      .btn-block {
+        display: block;
+        width: 100%;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .success-message {
+        background-color: rgba(39, 174, 96, 0.2);
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+      }
+
+      .error-message {
+        background-color: rgba(231, 76, 60, 0.2);
+        color: var(--danger-color);
+        border: 1px solid var(--danger-color);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .add-operation {
+        background-color: rgba(39, 174, 96, 0.1) !important;
+      }
+
+      .subtract-operation {
+        background-color: rgba(231, 76, 60, 0.1) !important;
+      }
+
+      .stock-list {
+        list-style: none;
+      }
+
+      .stock-list li {
+        padding: 12px 15px;
+        margin-bottom: 8px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .stock-list li span {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: var(--dark-color);
+        font-size: 14px;
+      }
+
+      .hidden {
+        display: none !important;
+        pointer-events: none;
+      }
+
+      /* Radio Button Styles */
+      .radio-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .radio-option input[type="radio"] {
+        width: auto;
+        margin-left: 8px;
+        cursor: pointer;
+      }
+
+      .radio-label {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background-color: #f5f5f5;
+        transition: all 0.3s;
+      }
+
+      .radio-option input[type="radio"]:checked + .radio-label {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      .radio-option.add-option input[type="radio"]:checked + .radio-label {
+        background-color: var(--success-color);
+      }
+
+      .radio-option.subtract-option input[type="radio"]:checked + .radio-label {
+        background-color: var(--danger-color);
+      }
+
+      /* Login Screen */
+      .login-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+      }
+
+      .login-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: var(--light-color);
+        border-radius: 8px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .title {
+          font-size: 20px;
+        }
+
+        .card {
+          padding: 15px;
+        }
+
+        th,
+        td {
+          padding: 8px 10px;
+          font-size: 14px;
+        }
+
+        .radio-group {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+
+        .btn {
+          padding: 10px 15px;
+          font-size: 14px;
+        }
+
+        .login-container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- شاشة تسجيل الدخول -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-container">
+        <h2 class="card-title"><i class="fas fa-lock"></i> تسجيل الدخول</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail"
+              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
+            >
+            <input
+              type="text"
+              id="loginUsername"
+              required
+              placeholder="أدخل اسم المستخدم"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword"
+              ><i class="fas fa-key"></i> كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="loginPassword"
+              required
+              placeholder="أدخل كلمة المرور"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-sign-in-alt"></i> دخول
+          </button>
+          <div class="message hidden" id="loginMessage"></div>
+
+          <div style="margin-top: 20px; text-align: center">
+            <p>
+              ليس لديك حساب؟ <a href="#" id="showRegister">إنشاء حساب جديد</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- شاشة تسجيل حساب جديد -->
+    <div class="login-screen hidden" id="registerScreen">
+      <div class="login-container">
+        <h2 class="card-title">
+          <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+        </h2>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="registerName"
+              ><i class="fas fa-user"></i> الاسم الكامل</label
+            >
+            <input
+              type="text"
+              id="registerName"
+              required
+              placeholder="أدخل الاسم الكامل"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="registerEmail"
+              ><i class="fas fa-envelope"></i> البريد الإلكتروني</label
+            >
+            <input
+              type="text"
+              id="registerUsername"
+              required
+              placeholder="أدخل اسم المستخدم"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="registerPassword"
+              ><i class="fas fa-key"></i> كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="registerPassword"
+              required
+              placeholder="أدخل كلمة المرور (6 أحرف على الأقل)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword"
+              ><i class="fas fa-key"></i> تأكيد كلمة المرور</label
+            >
+            <input
+              type="password"
+              id="confirmPassword"
+              required
+              placeholder="أعد إدخال كلمة المرور"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block">
+            <i class="fas fa-user-plus"></i> إنشاء حساب
+          </button>
+          <div class="message hidden" id="registerMessage"></div>
+
+          <div style="margin-top: 20px; text-align: center">
+            <p>لديك حساب بالفعل؟ <a href="#" id="showLogin">تسجيل الدخول</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- واجهة النظام الرئيسية -->
+    <div class="container hidden" id="mainApp">
+      <header class="header">
+        <img
+          src="https://github.com/Alqababa/Feedback/blob/main/LOGO.png?raw=true"
+          alt="شعار الشركة"
+          class="logo"
+          id="companyLogo"
+        />
+        <h1 class="title"><i class="fas fa-boxes"></i> نظام إدارة المخزون</h1>
+        <div class="user-info">
+          <span id="currentUserName"></span>
+          <button id="logoutBtn" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> خروج
+          </button>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2 class="card-title">
+          <i class="fas fa-clipboard-list"></i> تسجيل عملية جرد
+        </h2>
+        <form id="inventoryForm">
+          <div class="form-group">
+            <label for="itemName"><i class="fas fa-tag"></i> اسم الصنف</label>
+            <input
+              type="text"
+              id="itemName"
+              required
+              placeholder="أدخل اسم الصنف"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="quantity"
+              ><i class="fas fa-calculator"></i> الكمية</label
+            >
+            <input
+              type="number"
+              id="quantity"
+              required
+              placeholder="أدخل الكمية"
+              min="1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-exchange-alt"></i> نوع العملية</label>
+            <div class="radio-group">
+              <div class="radio-option add-option">
+                <input
+                  type="radio"
+                  id="addOperation"
+                  name="operationType"
+                  value="add"
+                  checked
+                />
+                <label for="addOperation" class="radio-label">
+                  <i class="fas fa-plus-circle"></i> إضافة إلى المخزون
+                </label>
+              </div>
+              <div class="radio-option subtract-option">
+                <input
+                  type="radio"
+                  id="subtractOperation"
+                  name="operationType"
+                  value="subtract"
+                />
+                <label for="subtractOperation" class="radio-label">
+                  <i class="fas fa-minus-circle"></i> سحب من المخزون
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes"
+              ><i class="fas fa-sticky-note"></i> ملاحظات</label
+            >
+            <textarea
+              id="notes"
+              placeholder="أدخل أي ملاحظات إضافية"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block">
+            <i class="fas fa-save"></i> حفظ العملية
+          </button>
+          <div class="message hidden" id="message"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">
+          <i class="fas fa-chart-bar"></i> التحكم في البيانات
+        </h2>
+        <button id="showDataBtn" class="btn btn-primary btn-block">
+          <i class="fas fa-table"></i> عرض سجل الجرد والكميات
+        </button>
+        <button
+          id="cleanupBtn"
+          class="btn btn-danger btn-block"
+          style="margin-top: 10px"
+        >
+          <i class="fas fa-trash-alt"></i> تنظيف السجلات القديمة
+        </button>
+      </div>
+
+      <div class="card hidden" id="outputSection">
+        <h2 class="card-title"><i class="fas fa-warehouse"></i> جرد المخزون</h2>
+        <div class="table-responsive">
+          <table id="inventoryTable">
+            <thead>
+              <tr>
+                <th>اسم الصنف</th>
+                <th>الكمية</th>
+                <th>نوع العملية</th>
+                <th>المستخدم</th>
+                <th>الملاحظات</th>
+                <th>التاريخ</th>
+                <th>العمر (أيام)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <h2 class="card-title">
+          <i class="fas fa-box-open"></i> الكميات المتبقية في المخزون
+        </h2>
+        <ul class="stock-list" id="stockList"></ul>
+      </div>
+
+      <footer class="footer">
+        <p>
+          تم التطوير بواسطة
+          <span style="color: var(--secondary-color); font-weight: 700"
+            >رامي</span
+          >
+          | جميع الحقوق محفوظة &copy; <span id="currentYear"></span>
+        </p>
+      </footer>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        push,
+        get,
+        remove,
+        update,
+        onValue,
+      } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDBK7kmCn3HsH7Q4RD6um01oQI4jhbVHPE",
+        authDomain: "inventory-b8fa3.firebaseapp.com",
+        databaseURL:
+          "https://inventory-b8fa3-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "inventory-b8fa3",
+        storageBucket: "inventory-b8fa3.firebasestorage.app",
+        messagingSenderId: "689213085197",
+        appId: "1:689213085197:web:274c256d7acecd67d32744",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const auth = getAuth(app);
+
+      // DOM Elements
+      const loginScreen = document.getElementById("loginScreen");
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const registerScreen = document.getElementById("registerScreen");
+      const registerForm = document.getElementById("registerForm");
+      const registerMessage = document.getElementById("registerMessage");
+      const showRegister = document.getElementById("showRegister");
+      const showLogin = document.getElementById("showLogin");
+
+      const mainApp = document.getElementById("mainApp");
+      const currentUserName = document.getElementById("currentUserName");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      const form = document.getElementById("inventoryForm");
+      const message = document.getElementById("message");
+      const showDataBtn = document.getElementById("showDataBtn");
+      const cleanupBtn = document.getElementById("cleanupBtn");
+      const outputSection = document.getElementById("outputSection");
+      const tableBody = document.querySelector("#inventoryTable tbody");
+      const stockList = document.getElementById("stockList");
+      const companyLogo = document.getElementById("companyLogo");
+      const currentYear = document.getElementById("currentYear");
+
+      // المستخدم الحالي
+      let currentUser = null;
+
+      // Set current year in footer
+      currentYear.textContent = new Date().getFullYear();
+
+      // Logo upload functionality (simulated)
+      companyLogo.addEventListener("click", () => {
+        const logoUrl = prompt(
+          "الرجاء إدخال رابط الشعار:",
+          "https://via.placeholder.com/200x70?text=شعار+الشركة"
+        );
+        if (logoUrl) {
+          companyLogo.src = logoUrl;
+          localStorage.setItem("companyLogo", logoUrl);
+        }
+      });
+
+      // Load logo from localStorage if exists
+      if (localStorage.getItem("companyLogo")) {
+        companyLogo.src = localStorage.getItem("companyLogo");
+      }
+
+      // تبديل بين شاشتي الدخول والتسجيل
+      showRegister.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginScreen.classList.add("hidden");
+        registerScreen.classList.remove("hidden");
+      });
+
+      showLogin.addEventListener("click", (e) => {
+        e.preventDefault();
+        registerScreen.classList.add("hidden");
+        loginScreen.classList.remove("hidden");
+      });
+
+      // تسجيل الدخول
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("loginUsername").value.trim();
+        const email = `${username}@gmail.com`;
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          currentUser = userCredential.user;
+
+          // جلب بيانات المستخدم الإضافية
+          const userRef = ref(db, `users/${currentUser.uid}`);
+          const snapshot = await get(userRef);
+
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            currentUser.displayName = userData.name;
+          }
+
+          // إخفاء واجهة تسجيل الدخول وعرض الواجهة الرئيسية
+          loginScreen.style.opacity = "0";
+          loginScreen.style.pointerEvents = "none";
+
+          setTimeout(() => {
+            loginScreen.classList.add("hidden");
+            mainApp.classList.remove("hidden");
+          }, 500);
+
+          const fallbackName = email.split("@")[0];
+          const displayName = currentUser.displayName || fallbackName;
+          currentUserName.textContent = displayName;
+        } catch (error) {
+          showLoginMessage(getAuthErrorMessage(error.code), "error");
+        }
+      });
+
+      // تسجيل حساب جديد
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("registerName").value.trim();
+        const username = document
+          .getElementById("registerUsername")
+          .value.trim();
+        const email = `${username}@gmail.com`;
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+          showRegisterMessage("كلمة المرور غير متطابقة", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showRegisterMessage(
+            "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+            "error"
+          );
+          return;
+        }
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          currentUser = userCredential.user;
+
+          // حفظ بيانات المستخدم الإضافية في قاعدة البيانات
+          await set(ref(db, `users/${currentUser.uid}`), {
+            name: name,
+            email: email,
+            createdAt: new Date().toISOString(),
+          });
+
+          currentUser.displayName = name;
+
+          // إخفاء واجهة التسجيل وعرض الواجهة الرئيسية
+          registerScreen.style.opacity = "0";
+          registerScreen.style.pointerEvents = "none";
+
+          setTimeout(() => {
+            registerScreen.classList.add("hidden");
+            mainApp.classList.remove("hidden");
+          }, 500);
+
+          currentUserName.textContent = name;
+          showRegisterMessage("✅ تم إنشاء الحساب بنجاح", "success");
+        } catch (error) {
+          showRegisterMessage(getAuthErrorMessage(error.code), "error");
+        }
+      });
+
+      // تسجيل الخروج
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          currentUser = null;
+          mainApp.classList.add("hidden");
+
+          // إعادة تفعيل شاشة الدخول
+          loginScreen.style.opacity = "1";
+          loginScreen.style.pointerEvents = "auto";
+          loginScreen.classList.remove("hidden");
+
+          document.getElementById("loginEmail").value = "";
+          document.getElementById("loginPassword").value = "";
+        } catch (error) {
+          showMessage("❌ حدث خطأ أثناء تسجيل الخروج", "error");
+        }
+      });
+
+      // التحقق من حالة المصادقة عند تحميل الصفحة
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          currentUser = user;
+
+          // جلب بيانات المستخدم الإضافية
+          const userRef = ref(db, `users/${user.uid}`);
+          const snapshot = await get(userRef);
+
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            currentUser.displayName = userData.name;
+          }
+
+          loginScreen.classList.add("hidden");
+          mainApp.classList.remove("hidden");
+          const fallbackName = user.email.split("@")[0];
+          const displayName = currentUser.displayName || fallbackName;
+          currentUserName.textContent = displayName;
+        } else {
+          loginScreen.classList.remove("hidden");
+          mainApp.classList.add("hidden");
+        }
+      });
+
+      // حساب الفرق بين تاريخين بالأيام
+      function dateDiffInDays(date1, date2) {
+        const diffTime = Math.abs(date2 - date1);
+        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      }
+
+      // تنظيف السجلات القديمة
+      async function cleanupOldRecords() {
+        try {
+          const snapshot = await get(ref(db, "inventory"));
+          if (!snapshot.exists()) {
+            showMessage("لا توجد سجلات لتنظيفها", "error");
+            return;
+          }
+
+          const data = snapshot.val();
+          const currentDate = new Date();
+          let deletedCount = 0;
+          let remainingStock = {};
+
+          // حساب الكميات المتبقية أولاً
+          Object.entries(data).forEach(([key, item]) => {
+            const name = item.name;
+            const qty = parseInt(item.quantity);
+            const operation = item.operation;
+
+            if (!remainingStock[name]) remainingStock[name] = 0;
+            remainingStock[name] += operation === "add" ? qty : -qty;
+          });
+
+          // حذف السجلات القديمة
+          const updates = {};
+          Object.entries(data).forEach(([key, item]) => {
+            const itemDate = new Date(item.date);
+            const daysOld = dateDiffInDays(itemDate, currentDate);
+
+            if (daysOld > 7) {
+              updates[`inventory/${key}`] = null;
+              deletedCount++;
+            }
+          });
+
+          if (deletedCount > 0) {
+            await update(ref(db), updates);
+            showMessage(`✅ تم حذف ${deletedCount} سجلاً قديماً`, "success");
+
+            // إعادة حساب الكميات المتبقية بعد الحذف
+            const newSnapshot = await get(ref(db, "inventory"));
+            if (newSnapshot.exists()) {
+              const newData = newSnapshot.val();
+              const newRemainingStock = {};
+
+              Object.values(newData).forEach((item) => {
+                const name = item.name;
+                const qty = parseInt(item.quantity);
+                const operation = item.operation;
+
+                if (!newRemainingStock[name]) newRemainingStock[name] = 0;
+                newRemainingStock[name] += operation === "add" ? qty : -qty;
+              });
+
+              // تحديث الكميات المتبقية في حالة وجود فرق
+              Object.keys(remainingStock).forEach((itemName) => {
+                if (!newRemainingStock[itemName]) {
+                  newRemainingStock[itemName] = remainingStock[itemName];
+                }
+              });
+
+              // حفظ الكميات المتبقية في قسم منفصل
+              await set(ref(db, "remainingStock"), newRemainingStock);
+            }
+          } else {
+            showMessage("لا توجد سجلات أقدم من 7 أيام", "error");
+          }
+        } catch (error) {
+          showMessage("❌ حدث خطأ أثناء تنظيف السجلات", "error");
+          console.error(error);
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!currentUser) {
+          showMessage("يجب تسجيل الدخول أولاً", "error");
+          return;
+        }
+
+        const itemName = document.getElementById("itemName").value.trim();
+        const quantity = parseInt(document.getElementById("quantity").value);
+        const operationType = document.querySelector(
+          'input[name="operationType"]:checked'
+        ).value;
+        const notes = document.getElementById("notes").value.trim();
+        const date = new Date().toISOString();
+
+        if (!itemName || isNaN(quantity) || quantity <= 0) {
+          showMessage("الرجاء إدخال بيانات صحيحة", "error");
+          return;
+        }
+
+        const entry = {
+          name: itemName,
+          quantity,
+          operation: operationType,
+          user: currentUser.displayName || currentUser.email.split("@")[0],
+          userId: currentUser.uid,
+          notes,
+          date,
+        };
+
+        try {
+          const newRef = push(ref(db, "inventory"));
+          await set(newRef, entry);
+          showMessage("✅ تمت إضافة العملية بنجاح", "success");
+          form.reset();
+          // Reset to add operation as default
+          document.getElementById("addOperation").checked = true;
+        } catch (error) {
+          showMessage("❌ حدث خطأ أثناء حفظ البيانات", "error");
+          console.error(error);
+        }
+      });
+
+      showDataBtn.addEventListener("click", async () => {
+        try {
+          const snapshot = await get(ref(db, "inventory"));
+          tableBody.innerHTML = "";
+          stockList.innerHTML = "";
+
+          const stockMap = {};
+          const currentDate = new Date();
+
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            Object.entries(data).forEach(([key, item]) => {
+              const name = item.name;
+              const qty = parseInt(item.quantity);
+              const operation = item.operation;
+              const operationClass =
+                operation === "add" ? "add-operation" : "subtract-operation";
+              const itemDate = new Date(item.date);
+              const daysOld = dateDiffInDays(itemDate, currentDate);
+
+              const row = `<tr class="${operationClass}">
+              <td>${name}</td>
+              <td>${qty}</td>
+              <td>${
+                operation === "add"
+                  ? '<span style="color: var(--success-color);"><i class="fas fa-plus-circle"></i> إضافة</span>'
+                  : '<span style="color: var(--danger-color);"><i class="fas fa-minus-circle"></i> سحب</span>'
+              }</td>
+              <td>${item.user || "غير معروف"}</td>
+              <td>${item.notes || "-"}</td>
+              <td>${itemDate.toLocaleString("ar-EG")}</td>
+              <td>${daysOld}</td>
+            </tr>`;
+              tableBody.innerHTML += row;
+
+              // حساب الكميات المتبقية
+              if (!stockMap[name]) stockMap[name] = 0;
+              stockMap[name] += operation === "add" ? qty : -qty;
+            });
+
+            // عرض الكميات المتبقية
+            Object.entries(stockMap).forEach(([item, qty]) => {
+              const statusColor =
+                qty <= 0
+                  ? "var(--danger-color)"
+                  : qty < 10
+                  ? "var(--warning-color)"
+                  : "var(--success-color)";
+              stockList.innerHTML += `
+              <li>
+                ${item}
+                <span style="background-color: ${statusColor}">
+                  ${qty} وحدة
+                  ${
+                    qty <= 0
+                      ? '<i class="fas fa-exclamation-triangle"></i>'
+                      : ""
+                  }
+                </span>
+              </li>`;
+            });
+
+            outputSection.classList.remove("hidden");
+            window.scrollTo({
+              top: outputSection.offsetTop,
+              behavior: "smooth",
+            });
+          } else {
+            showMessage("لا توجد بيانات لعرضها", "error");
+          }
+        } catch (error) {
+          showMessage("❌ حدث خطأ أثناء جلب البيانات", "error");
+          console.error(error);
+        }
+      });
+
+      cleanupBtn.addEventListener("click", cleanupOldRecords);
+
+      // ترجمة أخطاء المصادقة
+      function getAuthErrorMessage(errorCode) {
+        const messages = {
+          "auth/invalid-email": "البريد الإلكتروني غير صالح",
+          "auth/user-disabled": "هذا الحساب معطل",
+          "auth/user-not-found": "لا يوجد حساب بهذا البريد الإلكتروني",
+          "auth/wrong-password": "كلمة المرور غير صحيحة",
+          "auth/email-already-in-use": "البريد الإلكتروني مستخدم بالفعل",
+          "auth/operation-not-allowed": "هذه العملية غير مسموح بها",
+          "auth/weak-password":
+            "كلمة المرور ضعيفة (يجب أن تكون 6 أحرف على الأقل)",
+          "auth/too-many-requests":
+            "عدد كبير جداً من الطلبات، يرجى المحاولة لاحقاً",
+        };
+
+        return messages[errorCode] || "حدث خطأ غير معروف";
+      }
+
+      function showMessage(text, type) {
+        message.textContent = text;
+        message.className = `message ${type}-message`;
+        message.classList.remove("hidden");
+
+        setTimeout(() => {
+          message.classList.add("hidden");
+        }, 3000);
+      }
+
+      function showLoginMessage(text, type) {
+        loginMessage.textContent = text;
+        loginMessage.className = `message ${type}-message`;
+        loginMessage.classList.remove("hidden");
+
+        setTimeout(() => {
+          loginMessage.classList.add("hidden");
+        }, 3000);
+      }
+
+      function showRegisterMessage(text, type) {
+        registerMessage.textContent = text;
+        registerMessage.className = `message ${type}-message`;
+        registerMessage.classList.remove("hidden");
+
+        setTimeout(() => {
+          registerMessage.classList.add("hidden");
+        }, 3000);
+      }
+
+      // تنظيف السجلات القديمة تلقائياً عند تحميل الصفحة
+      window.addEventListener("load", async () => {
+        if (currentUser) {
+          await cleanupOldRecords();
+        }
+      });
+    </script>
+
+    <!-- Load Tajawal font for better Arabic support -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </body>
+</html>
