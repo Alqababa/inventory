@@ -533,7 +533,6 @@
                 <th>المستخدم</th>
                 <th>الملاحظات</th>
                 <th>التاريخ</th>
-                <th>العمر (أيام)</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -696,12 +695,6 @@
         }
       });
 
-      // حساب الفرق بين تاريخين بالأيام
-      function dateDiffInDays(date1, date2) {
-        const diffTime = Math.abs(date2 - date1);
-        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      }
-
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!currentUser) {
@@ -752,28 +745,28 @@
           stockList.innerHTML = "";
 
           const stockMap = {};
-          const currentDate = new Date();
 
           if (snapshot.exists()) {
             const data = snapshot.val();
-            
+
             // تحويل البيانات إلى مصفوفة وترتيبها حسب التاريخ (الأحدث أولاً)
-            const operations = Object.entries(data).map(([key, item]) => ({
-              key,
-              ...item,
-              dateObj: new Date(item.date)
-            })).sort((a, b) => b.dateObj - a.dateObj);
-            
+            const operations = Object.entries(data)
+              .map(([key, item]) => ({
+                key,
+                ...item,
+                dateObj: new Date(item.date),
+              }))
+              .sort((a, b) => b.dateObj - a.dateObj);
+
             // عرض آخر 3 عمليات فقط
             const recentOperations = operations.slice(0, 3);
-            
-            recentOperations.forEach(item => {
+
+            recentOperations.forEach((item) => {
               const name = item.name;
               const qty = parseInt(item.quantity);
               const operation = item.operation;
               const operationClass =
                 operation === "add" ? "add-operation" : "subtract-operation";
-              const daysOld = dateDiffInDays(item.dateObj, currentDate);
 
               const row = `<tr class="${operationClass}">
                 <td>${name}</td>
@@ -786,13 +779,12 @@
                 <td>${item.user || "غير معروف"}</td>
                 <td>${item.notes || "-"}</td>
                 <td>${item.dateObj.toLocaleString("ar-EG")}</td>
-                <td>${daysOld}</td>
               </tr>`;
               tableBody.innerHTML += row;
             });
 
             // حساب الكميات المتبقية بناءً على جميع العمليات (وليس فقط العمليات المعروضة)
-            operations.forEach(item => {
+            operations.forEach((item) => {
               const name = item.name;
               const qty = parseInt(item.quantity);
               const operation = item.operation;
