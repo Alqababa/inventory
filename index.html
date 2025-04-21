@@ -519,13 +519,6 @@
         <button id="showDataBtn" class="btn btn-primary btn-block">
           <i class="fas fa-table"></i> عرض سجل الجرد والكميات
         </button>
-        <button
-          id="cleanupBtn"
-          class="btn btn-danger btn-block"
-          style="margin-top: 10px"
-        >
-          <i class="fas fa-trash-alt"></i> تنظيف السجلات القديمة
-        </button>
       </div>
 
       <div class="card hidden" id="outputSection">
@@ -610,7 +603,6 @@
       const form = document.getElementById("inventoryForm");
       const message = document.getElementById("message");
       const showDataBtn = document.getElementById("showDataBtn");
-      const cleanupBtn = document.getElementById("cleanupBtn");
       const outputSection = document.getElementById("outputSection");
       const tableBody = document.querySelector("#inventoryTable tbody");
       const stockList = document.getElementById("stockList");
@@ -710,80 +702,6 @@
         return Math.floor(diffTime / (1000 * 60 * 60 * 24));
       }
 
-      // تنظيف السجلات القديمة
-      async function cleanupOldRecords() {
-        try {
-          const snapshot = await get(ref(db, "inventory"));
-          if (!snapshot.exists()) {
-            showMessage("لا توجد سجلات لتنظيفها", "error");
-            return;
-          }
-
-          const data = snapshot.val();
-          const currentDate = new Date();
-          let deletedCount = 0;
-          let remainingStock = {};
-
-          // حساب الكميات المتبقية أولاً
-          Object.entries(data).forEach(([key, item]) => {
-            const name = item.name;
-            const qty = parseInt(item.quantity);
-            const operation = item.operation;
-
-            if (!remainingStock[name]) remainingStock[name] = 0;
-            remainingStock[name] += operation === "add" ? qty : -qty;
-          });
-
-          // حذف السجلات القديمة
-          const updates = {};
-          Object.entries(data).forEach(([key, item]) => {
-            const itemDate = new Date(item.date);
-            const daysOld = dateDiffInDays(itemDate, currentDate);
-
-            if (daysOld > 7) {
-              updates[`inventory/${key}`] = null;
-              deletedCount++;
-            }
-          });
-
-          if (deletedCount > 0) {
-            await update(ref(db), updates);
-            showMessage(`✅ تم حذف ${deletedCount} سجلاً قديماً`, "success");
-
-            // إعادة حساب الكميات المتبقية بعد الحذف
-            const newSnapshot = await get(ref(db, "inventory"));
-            if (newSnapshot.exists()) {
-              const newData = newSnapshot.val();
-              const newRemainingStock = {};
-
-              Object.values(newData).forEach((item) => {
-                const name = item.name;
-                const qty = parseInt(item.quantity);
-                const operation = item.operation;
-
-                if (!newRemainingStock[name]) newRemainingStock[name] = 0;
-                newRemainingStock[name] += operation === "add" ? qty : -qty;
-              });
-
-              // تحديث الكميات المتبقية في حالة وجود فرق
-              Object.keys(remainingStock).forEach((itemName) => {
-                if (!newRemainingStock[itemName]) {
-                  newRemainingStock[itemName] = remainingStock[itemName];
-                }
-              });
-
-              // حفظ الكميات المتبقية في قسم منفصل
-              await set(ref(db, "remainingStock"), newRemainingStock);
-            }
-          } else {
-            showMessage("لا توجد سجلات أقدم من 7 أيام", "error");
-          }
-        } catch (error) {
-          showMessage("❌ حدث خطأ أثناء تنظيف السجلات", "error");
-          console.error(error);
-        }
-      }
-
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!currentUser) {
@@ -838,31 +756,47 @@
 
           if (snapshot.exists()) {
             const data = snapshot.val();
-            Object.entries(data).forEach(([key, item]) => {
+            
+            // تحويل البيانات إلى مصفوفة وترتيبها حسب التاريخ (الأحدث أولاً)
+            const operations = Object.entries(data).map(([key, item]) => ({
+              key,
+              ...item,
+              dateObj: new Date(item.date)
+            })).sort((a, b) => b.dateObj - a.dateObj);
+            
+            // عرض آخر 3 عمليات فقط
+            const recentOperations = operations.slice(0, 3);
+            
+            recentOperations.forEach(item => {
               const name = item.name;
               const qty = parseInt(item.quantity);
               const operation = item.operation;
               const operationClass =
                 operation === "add" ? "add-operation" : "subtract-operation";
-              const itemDate = new Date(item.date);
-              const daysOld = dateDiffInDays(itemDate, currentDate);
+              const daysOld = dateDiffInDays(item.dateObj, currentDate);
 
               const row = `<tr class="${operationClass}">
-              <td>${name}</td>
-              <td>${qty}</td>
-              <td>${
-                operation === "add"
-                  ? '<span style="color: var(--success-color);"><i class="fas fa-plus-circle"></i> إضافة</span>'
-                  : '<span style="color: var(--danger-color);"><i class="fas fa-minus-circle"></i> سحب</span>'
-              }</td>
-              <td>${item.user || "غير معروف"}</td>
-              <td>${item.notes || "-"}</td>
-              <td>${itemDate.toLocaleString("ar-EG")}</td>
-              <td>${daysOld}</td>
-            </tr>`;
+                <td>${name}</td>
+                <td>${qty}</td>
+                <td>${
+                  operation === "add"
+                    ? '<span style="color: var(--success-color);"><i class="fas fa-plus-circle"></i> إضافة</span>'
+                    : '<span style="color: var(--danger-color);"><i class="fas fa-minus-circle"></i> سحب</span>'
+                }</td>
+                <td>${item.user || "غير معروف"}</td>
+                <td>${item.notes || "-"}</td>
+                <td>${item.dateObj.toLocaleString("ar-EG")}</td>
+                <td>${daysOld}</td>
+              </tr>`;
               tableBody.innerHTML += row;
+            });
 
-              // حساب الكميات المتبقية
+            // حساب الكميات المتبقية بناءً على جميع العمليات (وليس فقط العمليات المعروضة)
+            operations.forEach(item => {
+              const name = item.name;
+              const qty = parseInt(item.quantity);
+              const operation = item.operation;
+
               if (!stockMap[name]) stockMap[name] = 0;
               stockMap[name] += operation === "add" ? qty : -qty;
             });
@@ -876,17 +810,17 @@
                   ? "var(--warning-color)"
                   : "var(--success-color)";
               stockList.innerHTML += `
-              <li>
-                ${item}
-                <span style="background-color: ${statusColor}">
-                  ${qty} وحدة
-                  ${
-                    qty <= 0
-                      ? '<i class="fas fa-exclamation-triangle"></i>'
-                      : ""
-                  }
-                </span>
-              </li>`;
+                <li>
+                  ${item}
+                  <span style="background-color: ${statusColor}">
+                    ${qty} وحدة
+                    ${
+                      qty <= 0
+                        ? '<i class="fas fa-exclamation-triangle"></i>'
+                        : ""
+                    }
+                  </span>
+                </li>`;
             });
 
             outputSection.classList.remove("hidden");
@@ -902,8 +836,6 @@
           console.error(error);
         }
       });
-
-      cleanupBtn.addEventListener("click", cleanupOldRecords);
 
       // ترجمة أخطاء المصادقة
       function getAuthErrorMessage(errorCode) {
@@ -938,13 +870,6 @@
           loginMessage.classList.add("hidden");
         }, 3000);
       }
-
-      // تنظيف السجلات القديمة تلقائياً عند تحميل الصفحة
-      window.addEventListener("load", async () => {
-        if (currentUser) {
-          await cleanupOldRecords();
-        }
-      });
     </script>
 
     <!-- Load Tajawal font for better Arabic support -->
